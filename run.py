@@ -21,7 +21,10 @@ argParser.add_argument("-s", "--scale", help="scale the source images", type=flo
 argParser.add_argument("--with-png", help="output with the combined png", action="store_true", default=False)
 argParser.add_argument("--quiet", action="store_true", default=False)
 argParser.add_argument("--extend-name", help="extra string after name", type=str, default="")
+argParser.add_argument("--pot", help="Forces the texture to have power-of-2 size", action="store_true", default=False)
+argParser.add_argument("--squared", help="Forces the texture to have a squared size", action="store_true", default=False)
 argParser.add_argument("--dump-pic-usage", help="dump png usage info to text", action="store_true", default=False)
+
 group = argParser.add_mutually_exclusive_group()
 group.add_argument("--tree", help="dump tree structure", action="store_true",default=False)
 group.add_argument("--single", help="export flash one by one", action="store_true", default=False)
@@ -169,7 +172,7 @@ class MainTree():
         self.PreHandleMirror()
         self.RemoveAnchorPng()
         self.TexturePacker()
-        if os.path.isfile(self.tmpPath + SEP + "%s.png"%OUTPUT_NAME):
+        if os.path.isfile(self.tmpPath + SEP + "%s.png "%OUTPUT_NAME):
             self.ImageMagicka()
             self.WriteOriginImgSizeInfo()
         else:
@@ -371,16 +374,15 @@ class MainTree():
                 '--format json',
                 '--trim-mode Trim',
                 '--disable-rotation',
-                '--size-constraints AnySize',
                 '--max-width 2048',
                 '--max-height 2048',
-                '--common-division-x 2',
-                '--common-division-y 2',
+                '%s'%(args.pot and "--size-constraints POT" or "--size-constraints AnySize"),
+                '%s'%(args.squared and "--force-squared" or ""),
                 #'--shape-debug',
                 '%s' %  (tpath + os.path.sep + 'singleimg')
                 ])
-
         sts, out = self.ExecuteCmd(cmd)
+
         if sts == 0:
             if (not args.quiet):
                 print('[info]TP success')
