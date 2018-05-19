@@ -233,6 +233,13 @@ class MainTree():
                 name, ext = os.path.splitext(filename)
             else:
                 continue
+
+            if args.with_png and ext == ".ppm" or ext == ".pgm":
+                continue
+
+            if args.with_png and ext == ".lua":
+                ext = ".png" + ext
+
             if ext == ".ppm" or ext == ".pgm" or ext == ".png":
                 ext = ".1" + ext
             ext = args.extend_name + ext
