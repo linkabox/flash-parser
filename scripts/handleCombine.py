@@ -91,6 +91,7 @@ class Handler():
                     continue
                 if frame.find('element') == None:
                     break
+                    
                 for element in frame:
                     bIsEmpty = False
                     if element.get('desc') or element.get('idStr'): #pic or label
@@ -101,7 +102,6 @@ class Handler():
                         if color_mat:
                             thisCS = cs.Clone()
                             thisCS.Push(color_mat)
-                        db.append((element, thisMS.CalAllMat(), thisCS.CalAllColor()))
                         if element.get('desc'):
                             if element.get('name').find('__anchor') < 0:
                                 if not self.dumpinfo.get(docname, None):
@@ -110,9 +110,12 @@ class Handler():
                                 if not ename in self.dumpinfo[docname]:
                                     self.dumpinfo[docname].append(ename)
                                 self.AddPic(element)
+                            else:
+                                thisMS.Pop()
                         else:
                             element.set('name', doc.get('filename') + '|' + element.get('idStr') + '[%s]'%element.get('string'))
                             self.AddLabel(element)
+                        db.append((element, thisMS.CalAllMat(), thisCS.CalAllColor()))
                     elif element.get('name')[:1] == '@':
                         thisMS = ms.Clone()
                         thisMS.Push(element.get('mat'))
